@@ -181,6 +181,7 @@ export type ASTNode =
   | { type: 'Assignment'; name: string; value: ASTNode }
   | { type: 'Repeat'; count: ASTNode; body: ASTNode[] }
   | { type: 'If'; condition: ASTNode; thenBody: ASTNode[]; elseBody?: ASTNode[] }
+  | { type: 'While'; condition: ASTNode; body: ASTNode[] }
   | { type: 'Command'; name: string; args: ASTNode[] }
   | { type: 'BinaryExpr'; left: ASTNode; operator: string; right: ASTNode }
   | { type: 'Literal'; value: any }
@@ -221,6 +222,7 @@ export class Parser {
       if (t.value === 'let') return this.parseVarDecl();
       if (t.value === 'repeat') return this.parseRepeat();
       if (t.value === 'if') return this.parseIf();
+      if (t.value === 'while') return this.parseWhile();
       // Commands are also keywords in this simplified DSL
       return this.parseCommand();
     }
@@ -286,6 +288,20 @@ export class Parser {
     }
 
     return { type: 'If', condition, thenBody, elseBody };
+  }
+
+  private parseWhile(): ASTNode {
+    this.consume('MOTCLE', 'while');
+    this.consume('PUNCT', '(');
+    const condition = this.parseExpression();
+    this.consume('PUNCT', ')');
+    this.consume('PUNCT', '{');
+    const body: ASTNode[] = [];
+    while (this.currentToken.value !== '}' && this.currentToken.type !== 'FIN') {
+      body.push(this.parseStatement());
+    }
+    this.consume('PUNCT', '}');
+    return { type: 'While', condition, body };
   }
 
   private parseCommand(): ASTNode {
@@ -438,6 +454,11 @@ export class Interpreter {
           for (const stmt of node.thenBody) this.visit(stmt);
         } else if (node.elseBody) {
           for (const stmt of node.elseBody) this.visit(stmt);
+        }
+        break;
+      case 'While':
+        while (this.visit(node.condition)) {
+          for (const stmt of node.body) this.visit(stmt);
         }
         break;
       case 'Command':

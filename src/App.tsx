@@ -48,19 +48,32 @@ export default function App() {
   const [errors, setErrors] = useState<CompilerError[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [isRunning, setIsRunning] = useState(false);
-  const [activeTab, setActiveTab] = useState<'editor' | 'docs'>('editor');
+  const [activeTab, setActiveTab] = useState<'editor' | 'docs' | 'compiler'>('editor');
+  const [tokens, setTokens] = useState<any[]>([]);
+  const [ast, setAst] = useState<any>(null);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const runCode = () => {
     setIsRunning(true);
     setLogs(['Compiling...']);
+    setTokens([]);
+    setAst(null);
     
     try {
       const lexer = new Lexer(code);
-      // In Flex/Bison pattern, the parser calls yylex internally
+      // Collect tokens for display
+      const tempLexer = new Lexer(code);
+      const tokenList = [];
+      let t;
+      while ((t = tempLexer.yylex()).type !== 'FIN') {
+        tokenList.push(t);
+      }
+      setTokens(tokenList);
+
       const parser = new Parser(lexer);
-      const { ast, errors: parseErrors } = parser.yyparse();
+      const { ast: parsedAst, errors: parseErrors } = parser.yyparse();
+      setAst(parsedAst);
       
       // Combine lexer errors and parser errors
       const allErrors = [...lexer.errors, ...parseErrors];
@@ -199,6 +212,13 @@ export default function App() {
               Editor
             </button>
             <button 
+              onClick={() => setActiveTab('compiler')}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'compiler' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+            >
+              <Cpu className="w-4 h-4 inline-block mr-2" />
+              Compiler
+            </button>
+            <button 
               onClick={() => setActiveTab('docs')}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === 'docs' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
             >
@@ -262,6 +282,56 @@ export default function App() {
                       placeholder="Enter your BotScript code here..."
                     />
                   </motion.div>
+                ) : activeTab === 'compiler' ? (
+                  <motion.div 
+                    key="compiler"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="h-full p-6 overflow-y-auto flex flex-col gap-6"
+                  >
+                    <div className="flex flex-col gap-3">
+                      <h3 className="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                        <Terminal size={12} />
+                        Flux de Jetons (yylex)
+                      </h3>
+                      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 font-mono text-[10px] h-48 overflow-y-auto">
+                        {tokens.length > 0 ? (
+                          <div className="space-y-1">
+                            {tokens.map((t, i) => (
+                              <div key={i} className="flex gap-4 border-b border-slate-900 pb-1">
+                                <span className="text-slate-600 w-6">#{i}</span>
+                                <span className="text-emerald-500 w-20">[{t.type}]</span>
+                                <span className="text-blue-400">"{t.value}"</span>
+                                <span className="text-slate-700 ml-auto">L{t.line}:C{t.col}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="h-full flex items-center justify-center text-slate-700 italic">
+                            Exécutez le code pour voir les jetons...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-3 flex-1">
+                      <h3 className="text-blue-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                        <Cpu size={12} />
+                        Arbre de Syntaxe Abstraite (yyparse)
+                      </h3>
+                      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 font-mono text-[10px] flex-1 overflow-y-auto">
+                        {ast ? (
+                          <pre className="text-blue-300/60 leading-tight">
+                            {JSON.stringify(ast, null, 2)}
+                          </pre>
+                        ) : (
+                          <div className="h-full flex items-center justify-center text-slate-700 italic">
+                            Exécutez le code pour voir l'AST...
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
                 ) : (
                   <motion.div 
                     key="docs"
@@ -298,7 +368,7 @@ expression: ENTIER | REEL | IDENT | expression '+' expression | ... ;`}
                       <p className="text-xs text-slate-400 italic">
                         Ce compilateur est structuré selon les principes vus en TP : 
                         yylex() pour l'analyse lexicale et yyparse() pour l'analyse syntaxique.
-                        Les fichiers sources .l et .y complets sont disponibles dans le dossier src/specs/.
+                        Les fichiers sources complets (.l, .y) et les fichiers générés théoriques (.tab.c, .tab.h, lex.yy.c) sont disponibles dans le dossier src/specs/.
                       </p>
                     </div>
                   </motion.div>
