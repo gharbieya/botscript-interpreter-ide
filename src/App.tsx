@@ -18,7 +18,18 @@ import {
   Github
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lexer, Parser, Interpreter, RobotState, CompilerError } from './compiler';
+import { compileInWasm, WasmCompilerError } from './wasm/botscriptWasm';
+
+type RobotState = {
+  x: number;
+  y: number;
+  angle: number;
+  penDown: boolean;
+  color: string;
+  history: { x: number; y: number; penDown: boolean; color: string }[];
+};
+
+type CompilerError = WasmCompilerError;
 
 const DEFAULT_CODE = `// BotScript Example: Draw a Square
 let size = 100;
@@ -54,50 +65,32 @@ export default function App() {
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const runCode = () => {
+  const runCode = async () => {
     setIsRunning(true);
-    setLogs(['Compiling...']);
+    setLogs(['Compiling with Flex/Bison (WASM)...']);
     setTokens([]);
     setAst(null);
-    
+    setErrors([]);
+
     try {
-      const lexer = new Lexer(code);
-      // Collect tokens for display
-      const tempLexer = new Lexer(code);
-      const tokenList = [];
-      let t;
-      while ((t = tempLexer.yylex()).type !== 'FIN') {
-        tokenList.push(t);
-      }
-      setTokens(tokenList);
+      const res = await compileInWasm(code);
 
-      const parser = new Parser(lexer);
-      const { ast: parsedAst, errors: parseErrors } = parser.yyparse();
-      setAst(parsedAst);
-      
-      // Combine lexer errors and parser errors
-      const allErrors = [...lexer.errors, ...parseErrors];
-      
-      if (allErrors.length > 0) {
-        setErrors(allErrors);
+      if (!res.ok) {
+        setErrors(res.errors);
         setLogs(prev => [...prev, 'Compilation failed. Check errors below.']);
-        setIsRunning(false);
         return;
       }
 
-      const interpreter = new Interpreter(parsedAst);
-      const { state, errors: semErrors } = interpreter.execute();
-      
-      if (semErrors.length > 0) {
-        setErrors(semErrors);
-        setLogs(prev => [...prev, 'Semantic analysis failed.']);
-        setIsRunning(false);
-        return;
-      }
+      setLogs(prev => [...prev, 'Compilation successful (Flex/Bison).']);
 
-      setErrors([]);
-      setRobotState(state);
-      setLogs(prev => [...prev, 'Execution successful!', `Robot moved to (${Math.round(state.x)}, ${Math.round(state.y)})`]);
+      // IMPORTANT:
+      // At this stage we only replaced the compiler front-end (lex/parse) with WASM.
+      // Your robot execution is still implemented in TypeScript Interpreter,
+      // but you asked to stop using TS Interpreter.
+      //
+      // So for now we do not execute commands and we just keep/clear the robot state.
+      setRobotState(null);
+      setLogs(prev => [...prev, 'Execution is disabled until moved to WASM (next step).']);
     } catch (err: any) {
       setLogs(prev => [...prev, `Runtime Error: ${err.message}`]);
     } finally {
