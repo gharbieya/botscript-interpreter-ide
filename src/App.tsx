@@ -47,12 +47,6 @@ penUp();
 forward(50);
 color("#ef4444");
 penDown();
-
-//draw a cercle
-// repeat 36 {
-//   forward(10);
-//   turn(10);
-// }
 `;
 
 export default function App() {
@@ -485,10 +479,6 @@ expression: ENTIER | REEL | IDENT | expression '+' expression | ... ;`}
 
       {/* Footer */}
       <footer className="mt-12 border-t border-slate-800 p-8 text-center">
-        <div className="flex items-center justify-center gap-6 mb-4">
-          <a href="#" className="text-slate-500 hover:text-white transition-colors"><Github className="w-5 h-5" /></a>
-          <a href="#" className="text-slate-500 hover:text-white transition-colors"><Settings className="w-5 h-5" /></a>
-        </div>
         <p className="text-slate-500 text-xs font-mono">
           &copy; 2025-2026 // 1 ISEOC - ISI // Mini-Projet Techniques de Compilation
         </p>
