@@ -44,6 +44,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 14 "D:/MP_compilation/src/specs/botscript.y"
+
+  typedef struct AstNode AstNode;
+
+#line 53 "D:/MP_compilation/src/specs/botscript.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -80,13 +86,19 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 17 "D:/MP_compilation/src/specs/botscript.y"
+#line 18 "D:/MP_compilation/src/specs/botscript.y"
 
     int entier;
     double reel;
     char *chaine;
 
-#line 90 "D:/MP_compilation/src/specs/botscript.tab.h"
+    AstNode* node;
+    struct {
+      AstNode** items;
+      int len;
+    } nodelist;
+
+#line 102 "D:/MP_compilation/src/specs/botscript.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

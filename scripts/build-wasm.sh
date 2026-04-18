@@ -60,7 +60,13 @@ echo "[4/4] Build WebAssembly module"
   -O2 \
   -s WASM=1 \
   -s MODULARIZE=1 \
+  -s EXPORT_NAME="createBotScriptModule" \
   -s EXPORT_ES6=0 \
+  -s ALLOW_MEMORY_GROWTH=1 \
   -s EXPORTED_FUNCTIONS='["_malloc","_free","_compile_json"]' \
-  -s EXPORTED_RUNTIME_METHODS='["cwrap","UTF8ToString","stringToUTF8","lengthBytesUTF8"]' \
+  -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap","UTF8ToString","stringToUTF8","lengthBytesUTF8"]' \
   -o "$OUT_DIR/botscript.js"
+
+echo "Done. Generated:"
+echo " - $OUT_DIR/botscript.js"
+echo " - $OUT_DIR/botscript.wasm"

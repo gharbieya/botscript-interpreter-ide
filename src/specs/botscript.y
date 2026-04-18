@@ -1,11 +1,8 @@
-/* IMPORTANT:
-   - No main() here. WASM calls compile_json() in wasm_runtime.c
-*/
-
 %{
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "wasm_bridge.h"
 
 extern int yylex();
 extern int yylineno;
@@ -14,10 +11,20 @@ void yyerror(const char *s);
 
 %define parse.error verbose
 
+%code requires {
+  typedef struct AstNode AstNode;
+}
+
 %union {
     int entier;
     double reel;
     char *chaine;
+
+    AstNode* node;
+    struct {
+      AstNode** items;
+      int len;
+    } nodelist;
 }
 
 /* Tokens */
@@ -27,8 +34,9 @@ void yyerror(const char *s);
 %token LET REPEAT IF ELSE WHILE FORWARD TURN COLOR PENDOWN PENUP
 %token EQ NE LE GE
 
-/* We define expression semantic value as double to avoid union conflicts */
-%type <reel> expression
+/* AST non-terminals */
+%type <node> program statement var_decl assignment repeat_loop while_loop if_stmt command expression
+%type <nodelist> statements stmt_block arg_list_opt arg_list
 
 %left '+' '-'
 %left '*' '/'
@@ -38,11 +46,31 @@ void yyerror(const char *s);
 
 program:
     statements
+    {
+      $$ = ast_make_program($1.items, $1.len);
+      wasm_set_ast_root($$);
+    }
     ;
 
 statements:
     statement
+    {
+      $$.items = ast_list_new($1, &$$.len);
+    }
     | statements statement
+    {
+      $$.items = ast_list_push($1.items, &$1.len, $2);
+      $$.len = $1.len;
+    }
+    ;
+
+stmt_block:
+    statements { $$ = $1; }
+    | /* empty */
+    {
+      $$.items = NULL;
+      $$.len = 0;
+    }
     ;
 
 statement:
@@ -56,48 +84,155 @@ statement:
 
 var_decl:
     LET IDENT '=' expression ';'
+    {
+      $$ = ast_make_var_decl($2, $4);
+      free($2);
+    }
     ;
 
 assignment:
     IDENT '=' expression ';'
+    {
+      $$ = ast_make_assignment($1, $3);
+      free($1);
+    }
     ;
 
 repeat_loop:
-    REPEAT expression '{' statements '}'
+    REPEAT expression '{' stmt_block '}'
+    {
+      $$ = ast_make_repeat($2, $4.items, $4.len);
+    }
     ;
 
 while_loop:
-    WHILE '(' expression ')' '{' statements '}'
+    WHILE '(' expression ')' '{' stmt_block '}'
+    {
+      $$ = ast_make_while($3, $6.items, $6.len);
+    }
     ;
 
 if_stmt:
-    IF '(' expression ')' '{' statements '}'
-    | IF '(' expression ')' '{' statements '}' ELSE '{' statements '}'
+    IF '(' expression ')' '{' stmt_block '}'
+    {
+      $$ = ast_make_if($3, $6.items, $6.len, NULL, 0);
+    }
+    | IF '(' expression ')' '{' stmt_block '}' ELSE '{' stmt_block '}'
+    {
+      $$ = ast_make_if($3, $6.items, $6.len, $10.items, $10.len);
+    }
+    ;
+
+arg_list_opt:
+    /* empty */
+    {
+      $$.items = NULL;
+      $$.len = 0;
+    }
+    | arg_list
+    {
+      $$ = $1;
+    }
+    ;
+
+arg_list:
+    expression
+    {
+      $$.items = ast_list_new($1, &$$.len);
+    }
+    | arg_list ',' expression
+    {
+      $$.items = ast_list_push($1.items, &$1.len, $3);
+      $$.len = $1.len;
+    }
     ;
 
 command:
-    FORWARD '(' expression ')' ';'
-    | TURN '(' expression ')' ';'
-    | COLOR '(' CHAINE ')' ';'
+    FORWARD '(' arg_list_opt ')' ';'
+    {
+      $$ = ast_make_command("forward", $3.items, $3.len);
+    }
+    | TURN '(' arg_list_opt ')' ';'
+    {
+      $$ = ast_make_command("turn", $3.items, $3.len);
+    }
+    | COLOR '(' arg_list_opt ')' ';'
+    {
+      $$ = ast_make_command("color", $3.items, $3.len);
+    }
     | PENDOWN '(' ')' ';'
+    {
+      $$ = ast_make_command("penDown", NULL, 0);
+    }
     | PENUP '(' ')' ';'
+    {
+      $$ = ast_make_command("penUp", NULL, 0);
+    }
     ;
 
 expression:
-    ENTIER                    { $$ = (double)$1; }
-    | REEL                    { $$ = $1; }
-    | IDENT                   { $$ = 0.0; /* TODO: semantic lookup */ }
-    | expression '+' expression { $$ = $1 + $3; }
-    | expression '-' expression { $$ = $1 - $3; }
-    | expression '*' expression { $$ = $1 * $3; }
-    | expression '/' expression { $$ = $1 / $3; }
-    | '(' expression ')'      { $$ = $2; }
-    | expression '<' expression { $$ = ($1 < $3) ? 1.0 : 0.0; }
-    | expression '>' expression { $$ = ($1 > $3) ? 1.0 : 0.0; }
-    | expression EQ expression  { $$ = ($1 == $3) ? 1.0 : 0.0; }
-    | expression NE expression  { $$ = ($1 != $3) ? 1.0 : 0.0; }
-    | expression LE expression  { $$ = ($1 <= $3) ? 1.0 : 0.0; }
-    | expression GE expression  { $$ = ($1 >= $3) ? 1.0 : 0.0; }
+    ENTIER
+    {
+      $$ = ast_make_literal_number((double)$1);
+    }
+    | REEL
+    {
+      $$ = ast_make_literal_number($1);
+    }
+    | CHAINE
+    {
+      $$ = ast_make_literal_string($1);
+      free($1);
+    }
+    | IDENT
+    {
+      $$ = ast_make_identifier($1);
+      free($1);
+    }
+    | expression '+' expression
+    {
+      $$ = ast_make_binary($1, "+", $3);
+    }
+    | expression '-' expression
+    {
+      $$ = ast_make_binary($1, "-", $3);
+    }
+    | expression '*' expression
+    {
+      $$ = ast_make_binary($1, "*", $3);
+    }
+    | expression '/' expression
+    {
+      $$ = ast_make_binary($1, "/", $3);
+    }
+    | expression '<' expression
+    {
+      $$ = ast_make_binary($1, "<", $3);
+    }
+    | expression '>' expression
+    {
+      $$ = ast_make_binary($1, ">", $3);
+    }
+    | expression EQ expression
+    {
+      $$ = ast_make_binary($1, "==", $3);
+    }
+    | expression NE expression
+    {
+      $$ = ast_make_binary($1, "!=", $3);
+    }
+    | expression LE expression
+    {
+      $$ = ast_make_binary($1, "<=", $3);
+    }
+    | expression GE expression
+    {
+      $$ = ast_make_binary($1, ">=", $3);
+    }
+    | '(' expression ')'
+    {
+      $$ = $2;
+    }
     ;
 
 %%

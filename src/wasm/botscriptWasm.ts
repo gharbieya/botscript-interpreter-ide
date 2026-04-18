@@ -6,17 +6,8 @@ export type WasmCompilerError = {
 };
 
 export type WasmTokenType =
-  | "ENTIER"
-  | "REEL"
-  | "IDENT"
-  | "MOTCLE"
-  | "OP_ARTHM"
-  | "OP_REL"
-  | "AFFECT"
-  | "PUNCT"
-  | "CHAINE"
-  | "FIN"
-  | "ERROR";
+  | "ENTIER" | "REEL" | "IDENT" | "MOTCLE" | "OP_ARTHM" | "OP_REL"
+  | "AFFECT" | "PUNCT" | "CHAINE" | "FIN" | "ERROR";
 
 export interface WasmToken {
   type: WasmTokenType;
@@ -25,12 +16,22 @@ export interface WasmToken {
   col: number;
 }
 
+export interface WasmTracePoint {
+  x: number;
+  y: number;
+  angle: number;
+  penDown: boolean;
+  color: string;
+}
+
+export type WasmAstNode = any;
+
 export type WasmCompileResponse = {
   ok: boolean;
   errors: WasmCompilerError[];
   tokens: WasmToken[];
-  ast: any | null;   // phase 2: still null
-  trace: any[];      // phase 2: empty
+  ast: WasmAstNode | null;
+  trace: WasmTracePoint[];
 };
 
 declare global {
@@ -56,9 +57,7 @@ export async function getBotScriptModule() {
   if (!modulePromise) {
     modulePromise = (async () => {
       await loadScript("/wasm/botscript.js");
-      if (!window.createBotScriptModule) {
-        throw new Error("createBotScriptModule not found on window");
-      }
+      if (!window.createBotScriptModule) throw new Error("createBotScriptModule not found on window");
       return window.createBotScriptModule();
     })();
   }
@@ -67,10 +66,8 @@ export async function getBotScriptModule() {
 
 export async function compileInWasm(source: string): Promise<WasmCompileResponse> {
   const mod = await getBotScriptModule();
-
   const ptr = mod.ccall("compile_json", "number", ["string"], [source]);
   const json = mod.UTF8ToString(ptr);
   mod._free(ptr);
-
   return JSON.parse(json) as WasmCompileResponse;
 }

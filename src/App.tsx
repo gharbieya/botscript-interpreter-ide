@@ -75,24 +75,48 @@ export default function App() {
     try {
       const res = await compileInWasm(code);
 
+      // Phase 3: always feed compiler panels from WASM output
+      setTokens(res.tokens ?? []);
+      setAst(res.ast ?? null);
+      setErrors(res.errors ?? []);
+
       if (!res.ok) {
-        setErrors(res.errors);
         setLogs(prev => [...prev, 'Compilation failed. Check errors below.']);
+        setRobotState(null);
         return;
       }
 
-      setLogs(prev => [...prev, 'Compilation successful (Flex/Bison).']);
+      setLogs(prev => [
+        ...prev,
+        `Compilation successful (Flex/Bison). Tokens: ${res.tokens?.length ?? 0}`
+      ]);
 
-      // IMPORTANT:
-      // At this stage we only replaced the compiler front-end (lex/parse) with WASM.
-      // Your robot execution is still implemented in TypeScript Interpreter,
-      // but you asked to stop using TS Interpreter.
-      //
-      // So for now we do not execute commands and we just keep/clear the robot state.
-      setRobotState(null);
-      setLogs(prev => [...prev, 'Execution is disabled until moved to WASM (next step).']);
+      // Phase 3: use WASM trace to build robot state/history
+      if (res.trace && res.trace.length > 0) {
+        const last = res.trace[res.trace.length - 1];
+
+        setRobotState({
+          x: last.x,
+          y: last.y,
+          angle: last.angle,
+          penDown: last.penDown,
+          color: last.color,
+          history: res.trace.map((p: any) => ({
+            x: p.x,
+            y: p.y,
+            penDown: p.penDown,
+            color: p.color,
+          })),
+        });
+
+        setLogs(prev => [...prev, `Execution trace loaded (${res.trace.length} points).`]);
+      } else {
+        setRobotState(null);
+        setLogs(prev => [...prev, 'No execution trace returned.']);
+      }
     } catch (err: any) {
       setLogs(prev => [...prev, `Runtime Error: ${err.message}`]);
+      setRobotState(null);
     } finally {
       setIsRunning(false);
     }
