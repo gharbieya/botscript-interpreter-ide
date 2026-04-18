@@ -151,7 +151,7 @@ The WebAssembly compiler is generated from the specs in `src/specs/`:
 
 The build script is `scripts/build-wasm.sh` and outputs to `public/wasm/`.
 
-### Install prerequisites: Flex, Bison, and `emcc`
+### Install prerequisites: Flex, Bison and `emcc`
 
 You need:
 - **Flex** (lexer generator)
@@ -195,9 +195,9 @@ emcc -v
 
 #### Windows native (works, but more moving parts)
 
-You need a Bash environment to run `scripts/build-wasm.sh`:
-- **WSL** (recommended), or
-- **Git Bash**, or
+You need a Bash environment to run `scripts/build-wasm.sh`, either:
+- **WSL** (recommended)
+- **Git Bash**
 - **MSYS2**
 
 Flex/Bison options:
@@ -248,4 +248,4 @@ Or do both in one command:
 npm run dev:wasm
 ```
 
-> On Windows, run these commands in WSL, MSYS2, or Git Bash if you want to rebuild the WASM compiler.
+> On Windows, run these commands in WSL, MSYS2 or Git Bash if you want to rebuild the WASM compiler.
