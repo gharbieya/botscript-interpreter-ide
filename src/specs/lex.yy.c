@@ -1,6 +1,6 @@
-#line 1 "src/specs/lex.yy.c"
+#line 1 "D:/MP_compilation/src/specs/lex.yy.c"
 
-#line 3 "src/specs/lex.yy.c"
+#line 3 "D:/MP_compilation/src/specs/lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -522,8 +522,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "src/specs/botscript.l"
-#line 2 "src/specs/botscript.l"
+#line 1 "D:/MP_compilation/src/specs/botscript.l"
+#line 2 "D:/MP_compilation/src/specs/botscript.l"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -531,8 +531,8 @@ char *yytext;
 
 /* yyerror is defined in wasm_runtime.c */
 void yyerror(const char *s);
-#line 534 "src/specs/lex.yy.c"
-#line 535 "src/specs/lex.yy.c"
+#line 534 "D:/MP_compilation/src/specs/lex.yy.c"
+#line 535 "D:/MP_compilation/src/specs/lex.yy.c"
 
 #define INITIAL 0
 
@@ -749,10 +749,10 @@ YY_DECL
 		}
 
 	{
-#line 14 "src/specs/botscript.l"
+#line 14 "D:/MP_compilation/src/specs/botscript.l"
 
 
-#line 755 "src/specs/lex.yy.c"
+#line 755 "D:/MP_compilation/src/specs/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -822,178 +822,178 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 16 "src/specs/botscript.l"
+#line 16 "D:/MP_compilation/src/specs/botscript.l"
 { /* Ignorer les espaces */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 17 "src/specs/botscript.l"
+#line 17 "D:/MP_compilation/src/specs/botscript.l"
 { /* Ignorer les commentaires */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 18 "src/specs/botscript.l"
+#line 18 "D:/MP_compilation/src/specs/botscript.l"
 { /* Ignorer les commentaires */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 20 "src/specs/botscript.l"
+#line 20 "D:/MP_compilation/src/specs/botscript.l"
 { return LET; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 21 "src/specs/botscript.l"
+#line 21 "D:/MP_compilation/src/specs/botscript.l"
 { return REPEAT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 22 "src/specs/botscript.l"
+#line 22 "D:/MP_compilation/src/specs/botscript.l"
 { return IF; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 23 "src/specs/botscript.l"
+#line 23 "D:/MP_compilation/src/specs/botscript.l"
 { return ELSE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 24 "src/specs/botscript.l"
+#line 24 "D:/MP_compilation/src/specs/botscript.l"
 { return WHILE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 25 "src/specs/botscript.l"
+#line 25 "D:/MP_compilation/src/specs/botscript.l"
 { return FORWARD; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 26 "src/specs/botscript.l"
+#line 26 "D:/MP_compilation/src/specs/botscript.l"
 { return TURN; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 27 "src/specs/botscript.l"
+#line 27 "D:/MP_compilation/src/specs/botscript.l"
 { return COLOR; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "src/specs/botscript.l"
+#line 28 "D:/MP_compilation/src/specs/botscript.l"
 { return PENDOWN; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "src/specs/botscript.l"
+#line 29 "D:/MP_compilation/src/specs/botscript.l"
 { return PENUP; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 31 "src/specs/botscript.l"
+#line 31 "D:/MP_compilation/src/specs/botscript.l"
 { yylval.reel = atof(yytext); return REEL; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 32 "src/specs/botscript.l"
+#line 32 "D:/MP_compilation/src/specs/botscript.l"
 { yylval.entier = atoi(yytext); return ENTIER; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 33 "src/specs/botscript.l"
+#line 33 "D:/MP_compilation/src/specs/botscript.l"
 { yylval.chaine = strdup(yytext); return IDENT; }
 	YY_BREAK
 case 17:
 /* rule 17 can match eol */
 YY_RULE_SETUP
-#line 34 "src/specs/botscript.l"
+#line 34 "D:/MP_compilation/src/specs/botscript.l"
 { yylval.chaine = strdup(yytext + 1); yylval.chaine[strlen(yylval.chaine)-1] = '\0'; return CHAINE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 36 "src/specs/botscript.l"
+#line 36 "D:/MP_compilation/src/specs/botscript.l"
 { return '+'; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 37 "src/specs/botscript.l"
+#line 37 "D:/MP_compilation/src/specs/botscript.l"
 { return '-'; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 38 "src/specs/botscript.l"
+#line 38 "D:/MP_compilation/src/specs/botscript.l"
 { return '*'; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 39 "src/specs/botscript.l"
+#line 39 "D:/MP_compilation/src/specs/botscript.l"
 { return '/'; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 40 "src/specs/botscript.l"
+#line 40 "D:/MP_compilation/src/specs/botscript.l"
 { return EQ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 41 "src/specs/botscript.l"
+#line 41 "D:/MP_compilation/src/specs/botscript.l"
 { return NE; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 42 "src/specs/botscript.l"
+#line 42 "D:/MP_compilation/src/specs/botscript.l"
 { return LE; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 43 "src/specs/botscript.l"
+#line 43 "D:/MP_compilation/src/specs/botscript.l"
 { return GE; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 44 "src/specs/botscript.l"
+#line 44 "D:/MP_compilation/src/specs/botscript.l"
 { return '<'; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 45 "src/specs/botscript.l"
+#line 45 "D:/MP_compilation/src/specs/botscript.l"
 { return '>'; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 46 "src/specs/botscript.l"
+#line 46 "D:/MP_compilation/src/specs/botscript.l"
 { return '='; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 48 "src/specs/botscript.l"
+#line 48 "D:/MP_compilation/src/specs/botscript.l"
 { return '{'; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 49 "src/specs/botscript.l"
+#line 49 "D:/MP_compilation/src/specs/botscript.l"
 { return '}'; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 50 "src/specs/botscript.l"
+#line 50 "D:/MP_compilation/src/specs/botscript.l"
 { return '('; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 51 "src/specs/botscript.l"
+#line 51 "D:/MP_compilation/src/specs/botscript.l"
 { return ')'; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 52 "src/specs/botscript.l"
+#line 52 "D:/MP_compilation/src/specs/botscript.l"
 { return ';'; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 53 "src/specs/botscript.l"
+#line 53 "D:/MP_compilation/src/specs/botscript.l"
 { return ','; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 55 "src/specs/botscript.l"
+#line 55 "D:/MP_compilation/src/specs/botscript.l"
 {
     yyerror("Erreur lexicale: caractère inattendu");
     return 0;
@@ -1001,10 +1001,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 60 "src/specs/botscript.l"
+#line 60 "D:/MP_compilation/src/specs/botscript.l"
 ECHO;
 	YY_BREAK
-#line 1007 "src/specs/lex.yy.c"
+#line 1007 "D:/MP_compilation/src/specs/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2021,5 +2021,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 60 "src/specs/botscript.l"
+#line 60 "D:/MP_compilation/src/specs/botscript.l"
 

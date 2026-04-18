@@ -1,39 +1,66 @@
-# wasm = WebAssembly
-# Bash build script that runs Bison + Flex + Emscripten to generate and compile C compiler into wasm files (botscript.js + botscript.wasm) so the React app can use it in the browser
-
 #!/usr/bin/env bash
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SPECS_DIR="$ROOT_DIR/src/specs"
-OUT_DIR="$ROOT_DIR/.wasm-build"
-PUBLIC_WASM_DIR="$ROOT_DIR/public/wasm"
+OUT_DIR="$ROOT_DIR/public/wasm"
+EMSDK_DIR="${HOME}/emsdk"
 
-mkdir -p "$OUT_DIR" "$PUBLIC_WASM_DIR"
+mkdir -p "$OUT_DIR"
 
-echo "[1/4] Generate parser with bison"
-bison -d -o "$OUT_DIR/botscript.tab.c" "$SPECS_DIR/botscript.y"
+echo "[1/4] Resolve toolchain"
 
-echo "[2/4] Generate lexer with flex"
-flex -o "$OUT_DIR/lex.yy.c" "$SPECS_DIR/botscript.l"
+# Resolve bison/flex names (Windows winget vs msys2)
+if command -v bison >/dev/null 2>&1; then
+  BISON_CMD="bison"
+elif command -v win_bison >/dev/null 2>&1; then
+  BISON_CMD="win_bison"
+else
+  echo "Error: neither bison nor win_bison found in PATH"
+  exit 1
+fi
 
-echo "[3/4] Compile to WebAssembly with emcc"
-# We expose compile_json() to JavaScript
-emcc \
+if command -v flex >/dev/null 2>&1; then
+  FLEX_CMD="flex"
+elif command -v win_flex >/dev/null 2>&1; then
+  FLEX_CMD="win_flex"
+else
+  echo "Error: neither flex nor win_flex found in PATH"
+  exit 1
+fi
+
+# Resolve emcc command safely (handles spaces in paths)
+if command -v emcc >/dev/null 2>&1; then
+  EMCC_CMD=(emcc)
+elif [ -f "$EMSDK_DIR/upstream/emscripten/emcc.py" ]; then
+  if [ -n "${EMSDK_PYTHON:-}" ] && [ -f "${EMSDK_PYTHON}" ]; then
+    EMCC_CMD=("${EMSDK_PYTHON}" "$EMSDK_DIR/upstream/emscripten/emcc.py")
+  elif command -v python3 >/dev/null 2>&1; then
+    EMCC_CMD=(python3 "$EMSDK_DIR/upstream/emscripten/emcc.py")
+  else
+    echo "Error: emcc not found. Run: source ~/emsdk/emsdk_env.sh"
+    exit 1
+  fi
+else
+  echo "Error: emcc not found. Install/activate emsdk."
+  exit 1
+fi
+
+echo "[2/4] Generate parser with $BISON_CMD"
+"$BISON_CMD" -d -o "$SPECS_DIR/botscript.tab.c" "$SPECS_DIR/botscript.y"
+
+echo "[3/4] Generate lexer with $FLEX_CMD"
+"$FLEX_CMD" -o "$SPECS_DIR/lex.yy.c" "$SPECS_DIR/botscript.l"
+
+echo "[4/4] Build WebAssembly module"
+"${EMCC_CMD[@]}" \
+  "$SPECS_DIR/botscript.tab.c" \
+  "$SPECS_DIR/lex.yy.c" \
+  "$SPECS_DIR/wasm_runtime.c" \
   -O2 \
   -s WASM=1 \
   -s MODULARIZE=1 \
-  -s EXPORT_NAME="createBotScriptModule" \
-  -s EXPORTED_FUNCTIONS='["_compile_json","_free","_malloc"]' \
-  -s EXPORTED_RUNTIME_METHODS='["ccall","UTF8ToString"]' \
-  -s ALLOW_MEMORY_GROWTH=1 \
-  -I"$OUT_DIR" \
-  "$OUT_DIR/botscript.tab.c" \
-  "$OUT_DIR/lex.yy.c" \
-  "$SPECS_DIR/wasm_runtime.c" \
-  -o "$PUBLIC_WASM_DIR/botscript.js"
-
-echo "[4/4] Done."
-echo "Generated:"
-echo "  - $PUBLIC_WASM_DIR/botscript.js"
-echo "  - $PUBLIC_WASM_DIR/botscript.wasm"
+  -s EXPORT_ES6=0 \
+  -s EXPORTED_FUNCTIONS='["_malloc","_free","_compile_json"]' \
+  -s EXPORTED_RUNTIME_METHODS='["cwrap","UTF8ToString","stringToUTF8","lengthBytesUTF8"]' \
+  -o "$OUT_DIR/botscript.js"

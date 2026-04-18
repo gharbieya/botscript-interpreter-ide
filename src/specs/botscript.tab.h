@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED
-# define YY_YY_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED
+#ifndef YY_YY_D_MP_COMPILATION_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED
+# define YY_YY_D_MP_COMPILATION_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -80,13 +80,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "src/specs/botscript.y"
+#line 15 "D:/MP_compilation/src/specs/botscript.y"
 
     int entier;
     double reel;
     char *chaine;
 
-#line 90 "src/specs/botscript.tab.h"
+#line 90 "D:/MP_compilation/src/specs/botscript.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -101,4 +101,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED  */
+#endif /* !YY_YY_D_MP_COMPILATION_SRC_SPECS_BOTSCRIPT_TAB_H_INCLUDED  */

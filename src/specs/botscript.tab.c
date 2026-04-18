@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 5 "src/specs/botscript.y"
+#line 5 "D:/MP_compilation/src/specs/botscript.y"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -77,7 +77,7 @@ extern int yylex();
 extern int yylineno;
 void yyerror(const char *s);
 
-#line 81 "src/specs/botscript.tab.c"
+#line 81 "D:/MP_compilation/src/specs/botscript.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -1186,91 +1186,91 @@ yyreduce:
   switch (yyn)
     {
   case 22: /* expression: ENTIER  */
-#line 85 "src/specs/botscript.y"
+#line 85 "D:/MP_compilation/src/specs/botscript.y"
                               { (yyval.reel) = (double)(yyvsp[0].entier); }
-#line 1192 "src/specs/botscript.tab.c"
+#line 1192 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 23: /* expression: REEL  */
-#line 86 "src/specs/botscript.y"
+#line 86 "D:/MP_compilation/src/specs/botscript.y"
                               { (yyval.reel) = (yyvsp[0].reel); }
-#line 1198 "src/specs/botscript.tab.c"
+#line 1198 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 24: /* expression: IDENT  */
-#line 87 "src/specs/botscript.y"
+#line 87 "D:/MP_compilation/src/specs/botscript.y"
                               { (yyval.reel) = 0.0; /* TODO: semantic lookup */ }
-#line 1204 "src/specs/botscript.tab.c"
+#line 1204 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 25: /* expression: expression '+' expression  */
-#line 88 "src/specs/botscript.y"
+#line 88 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = (yyvsp[-2].reel) + (yyvsp[0].reel); }
-#line 1210 "src/specs/botscript.tab.c"
+#line 1210 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 26: /* expression: expression '-' expression  */
-#line 89 "src/specs/botscript.y"
+#line 89 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = (yyvsp[-2].reel) - (yyvsp[0].reel); }
-#line 1216 "src/specs/botscript.tab.c"
+#line 1216 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 27: /* expression: expression '*' expression  */
-#line 90 "src/specs/botscript.y"
+#line 90 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = (yyvsp[-2].reel) * (yyvsp[0].reel); }
-#line 1222 "src/specs/botscript.tab.c"
+#line 1222 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 28: /* expression: expression '/' expression  */
-#line 91 "src/specs/botscript.y"
+#line 91 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = (yyvsp[-2].reel) / (yyvsp[0].reel); }
-#line 1228 "src/specs/botscript.tab.c"
+#line 1228 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 29: /* expression: '(' expression ')'  */
-#line 92 "src/specs/botscript.y"
+#line 92 "D:/MP_compilation/src/specs/botscript.y"
                               { (yyval.reel) = (yyvsp[-1].reel); }
-#line 1234 "src/specs/botscript.tab.c"
+#line 1234 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 30: /* expression: expression '<' expression  */
-#line 93 "src/specs/botscript.y"
+#line 93 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) < (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1240 "src/specs/botscript.tab.c"
+#line 1240 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 31: /* expression: expression '>' expression  */
-#line 94 "src/specs/botscript.y"
+#line 94 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) > (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1246 "src/specs/botscript.tab.c"
+#line 1246 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 32: /* expression: expression EQ expression  */
-#line 95 "src/specs/botscript.y"
+#line 95 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) == (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1252 "src/specs/botscript.tab.c"
+#line 1252 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 33: /* expression: expression NE expression  */
-#line 96 "src/specs/botscript.y"
+#line 96 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) != (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1258 "src/specs/botscript.tab.c"
+#line 1258 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 34: /* expression: expression LE expression  */
-#line 97 "src/specs/botscript.y"
+#line 97 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) <= (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1264 "src/specs/botscript.tab.c"
+#line 1264 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
   case 35: /* expression: expression GE expression  */
-#line 98 "src/specs/botscript.y"
+#line 98 "D:/MP_compilation/src/specs/botscript.y"
                                 { (yyval.reel) = ((yyvsp[-2].reel) >= (yyvsp[0].reel)) ? 1.0 : 0.0; }
-#line 1270 "src/specs/botscript.tab.c"
+#line 1270 "D:/MP_compilation/src/specs/botscript.tab.c"
     break;
 
 
-#line 1274 "src/specs/botscript.tab.c"
+#line 1274 "D:/MP_compilation/src/specs/botscript.tab.c"
 
       default: break;
     }
@@ -1463,4 +1463,4 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 101 "src/specs/botscript.y"
+#line 101 "D:/MP_compilation/src/specs/botscript.y"
