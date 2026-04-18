@@ -301,14 +301,14 @@ export default function App() {
                     initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.98 }}
-                    className="h-full p-6 overflow-y-auto flex flex-col gap-6"
+                    className="h-full p-6 overflow-y-auto flex flex-col"
                   >
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 flex-1 min-h-0">
                       <h3 className="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                         <Terminal size={12} />
                         Flux de Jetons (yylex)
                       </h3>
-                      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 font-mono text-[10px] h-48 overflow-y-auto">
+                      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 font-mono text-[10px] flex-1 overflow-y-auto">
                         {tokens.length > 0 ? (
                           <div className="space-y-1">
                             {tokens.map((t, i) => (
@@ -323,23 +323,6 @@ export default function App() {
                         ) : (
                           <div className="h-full flex items-center justify-center text-slate-700 italic">
                             Exécutez le code pour voir les jetons...
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-3 flex-1">
-                      <h3 className="text-blue-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
-                        <Cpu size={12} />
-                        Arbre de Syntaxe Abstraite (yyparse)
-                      </h3>
-                      <div className="bg-slate-950/50 rounded-xl border border-slate-800 p-4 font-mono text-[10px] flex-1 overflow-y-auto">
-                        {ast ? (
-                          <pre className="text-blue-300/60 leading-tight">
-                            {JSON.stringify(ast, null, 2)}
-                          </pre>
-                        ) : (
-                          <div className="h-full flex items-center justify-center text-slate-700 italic">
-                            Exécutez le code pour voir l'AST...
                           </div>
                         )}
                       </div>
