@@ -1,6 +1,7 @@
-# BotScript IDE (User Manual)
+# BotScript IDE : User Manual
 
-BotScript IDE is a web-based IDE for **BotScript**, a small domain-specific language (DSL) designed to control a virtual drawing robot. The project demonstrates classic compiler concepts (lexing, parsing, AST construction) using **Flex/Bison compiled to WebAssembly**, and provides compiler visualizations (tokens + AST) directly in the UI.
+BotScript IDE is a web-based IDE for **BotScript**, a small domain-specific language (DSL) designed to control a virtual drawing robot. 
+It shows tokens + AST in the UI and runs code with an interpreter.
 
 ## 1) Quick start (Windows / Linux)
 
@@ -26,7 +27,7 @@ Then open `http://localhost:3000`.
    - the AST in JSON (what the parser built)
 4. The **Canvas** shows the robot path (execution trace).
 
-## 3) The BotScript DSL (detailed reference)
+## 3) The BotScript DSL - detailed reference
 
 ### 3.1 Lexical rules
 
@@ -150,7 +151,7 @@ The WebAssembly compiler is generated from the specs in `src/specs/`:
 
 The build script is `scripts/build-wasm.sh` and outputs to `public/wasm/`.
 
-### Install prerequisites: Flex, Bison, and `emcc`
+### Install prerequisites: Flex, Bison and `emcc`
 
 You need:
 - **Flex** (lexer generator)
@@ -194,9 +195,9 @@ emcc -v
 
 #### Windows native (works, but more moving parts)
 
-You need a Bash environment to run `scripts/build-wasm.sh`:
-- **WSL** (recommended), or
-- **Git Bash**, or
+You need a Bash environment to run `scripts/build-wasm.sh`, either:
+- **WSL** (recommended)
+- **Git Bash**
 - **MSYS2**
 
 Flex/Bison options:
@@ -247,16 +248,4 @@ Or do both in one command:
 npm run dev:wasm
 ```
 
-> On Windows, run these commands in WSL, MSYS2, or Git Bash if you want to rebuild the WASM compiler.
-
-## 6) Project structure (high level)
-
-- `src/App.tsx`: UI (editor, compiler panels, canvas)
-- `src/wasm/botscriptWasm.ts`: loads and calls the WASM compiler
-- `src/specs/`: Flex/Bison specs + runtime (`wasm_runtime.c`, `wasm_bridge.h`)
-- `public/wasm/`: generated `botscript.js` + `botscript.wasm`
-
-## 7) Troubleshooting
-
-- **Port 3000 already used**: change the port in `package.json` (script `dev`) or stop the process using it.
-- **`npm run dev:wasm` fails on Windows**: use WSL (Ubuntu) or ensure `win_flex`, `win_bison`, and `emcc` are on `PATH`.
+> On Windows, run these commands in WSL, MSYS2 or Git Bash if you want to rebuild the WASM compiler.
