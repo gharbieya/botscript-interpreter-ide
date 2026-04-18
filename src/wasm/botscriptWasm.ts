@@ -1,5 +1,3 @@
-// this file is a TypeScript “bridge” module that loads the generated wasm compiler (/wasm/botscript.js + .wasm) in the browser and exposes a function the React UI can call to compile BotScript code using the Flex/Bison WASM backend
-
 export type WasmCompilerError = {
   type: "LEXICAL" | "SYNTACTIC" | "SEMANTIC";
   message: string;
@@ -7,9 +5,33 @@ export type WasmCompilerError = {
   col: number;
 };
 
-export type WasmCompileResponse =
-  | { ok: true; errors: [] }
-  | { ok: false; errors: WasmCompilerError[] };
+export type WasmTokenType =
+  | "ENTIER"
+  | "REEL"
+  | "IDENT"
+  | "MOTCLE"
+  | "OP_ARTHM"
+  | "OP_REL"
+  | "AFFECT"
+  | "PUNCT"
+  | "CHAINE"
+  | "FIN"
+  | "ERROR";
+
+export interface WasmToken {
+  type: WasmTokenType;
+  value: any;
+  line: number;
+  col: number;
+}
+
+export type WasmCompileResponse = {
+  ok: boolean;
+  errors: WasmCompilerError[];
+  tokens: WasmToken[];
+  ast: any | null;   // phase 2: still null
+  trace: any[];      // phase 2: empty
+};
 
 declare global {
   interface Window {
@@ -50,5 +72,5 @@ export async function compileInWasm(source: string): Promise<WasmCompileResponse
   const json = mod.UTF8ToString(ptr);
   mod._free(ptr);
 
-  return JSON.parse(json);
+  return JSON.parse(json) as WasmCompileResponse;
 }

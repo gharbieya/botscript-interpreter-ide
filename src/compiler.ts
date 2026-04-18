@@ -1,4 +1,6 @@
-// BotScript Compiler 
+// BotScript Interpreter 
+
+import { compileInWasm } from "./wasm/botscriptWasm";
 
 // --- GLOBAL STATE (Mimicking Flex/Bison globals) ---
 export let yytext: string = "";
@@ -397,6 +399,22 @@ export interface RobotState {
   penDown: boolean;
   color: string;
   history: { x: number; y: number; penDown: boolean; color: string }[];
+}
+
+export async function compileWithWasmOnly(source: string) {
+  const result = await compileInWasm(source);
+
+  // Phase 2 policy:
+  // - Frontend compiler logic disabled
+  // - Keep robot state untouched here
+  // - UI consumes wasm tokens/errors directly
+  return {
+    ok: result.ok,
+    errors: result.errors,
+    tokens: result.tokens,
+    ast: result.ast,      // null in phase 2
+    trace: result.trace,  // [] in phase 2
+  };
 }
 
 export class Interpreter {

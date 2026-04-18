@@ -80,7 +80,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "D:/MP_compilation/src/specs/botscript.y"
+#line 17 "D:/MP_compilation/src/specs/botscript.y"
 
     int entier;
     double reel;

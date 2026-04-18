@@ -12,6 +12,8 @@ extern int yylineno;
 void yyerror(const char *s);
 %}
 
+%define parse.error verbose
+
 %union {
     int entier;
     double reel;
